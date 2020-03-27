@@ -16,6 +16,10 @@
   },
   "dependencies": {
     "gatsby": "^2.19.12",
+    "gatsby-image": "^2.0.13",
+    "gatsby-source-contentful": "^2.1.78",
+    "gh-pages": "^2.0.1",
+    "lodash": "^4.17.11",
     "gatsby-awesome-pagination": "^0.3.5",
     "gatsby-plugin-manifest": "^2.2.41",
     "gatsby-plugin-netlify-cms": "^4.1.39",

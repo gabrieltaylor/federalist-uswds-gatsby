@@ -33,20 +33,22 @@ const DocumentationPage = ({ data }) => {
 };
 
 export const pageQuery = graphql`
-  query($name: String!) {
-    markdownRemark(
-      fields: {
-        sourceName: { eq: "documentation-pages" }
-        name: { eq: $name }
+  query DocumentationPageBySlug($slug: String!) {
+    contentfulBlogPost(slug: { eq: $slug }) {
+      title
+      publishDate(formatString: "MMMM Do, YYYY")
+      heroImage {
+        fluid(maxWidth: 1180, background: "rgb:000000") {
+          ...GatsbyContentfulFluid_tracedSVG
+        }
       }
-    ) {
-      html
-      frontmatter {
-        title
-        sidenav
+      body {
+        childMarkdownRemark {
+          html
+        }
       }
     }
   }
-`;
+`
 
 export default DocumentationPage;

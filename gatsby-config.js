@@ -1,9 +1,30 @@
+let contentfulConfig
+
+try {
+  // Load the Contentful config from the .contentful.json
+  contentfulConfig = require('./.contentful')
+} catch (_) {}
+
+// Overwrite the Contentful config with environment variables if they exist
+contentfulConfig = {
+  spaceId: process.env.CONTENTFUL_SPACE_ID || contentfulConfig.spaceId,
+  accessToken:
+    process.env.CONTENTFUL_DELIVERY_TOKEN || contentfulConfig.accessToken,
+}
+
+const { spaceId, accessToken } = contentfulConfig
+
+if (!spaceId || !accessToken) {
+  throw new Error(
+    'Contentful spaceId and the delivery token need to be provided.'
+  )
+}
+
 module.exports = {
   siteMetadata: {
-    author: 'Foo',
-    title: `Agency Name`,
-    description: `Agency Name (EAC) Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    Aenean et sapien a leo auctor scelerisque quis nec magna. Sed dictum ante a risus vehicula facilisis.`,
+    author: 'LA County Digital Services',
+    title: `LA County`,
+    description: `Access information and services from LA County agencies.`,
     navigation: [
       {
         items: [{ text: 'Home', link: '/' }],
@@ -12,27 +33,19 @@ module.exports = {
         items: [{ text: 'Blog', link: '/blog' }],
       },
       {
-        items: [{ text: 'Document', link: '/document' }],
+        items: [{ text: 'Topics', link: '/topics' }],
       },
       {
-        items: [
-          { text: 'Document with sidenav', link: '/document-with-sidenav' },
-        ],
+        items: [{ text: 'Agencies', link: '/agencies' }],
       },
       {
-        title: 'Document submenu',
-        items: [
-          { text: 'Navigation link', link: '/' },
-          { text: 'Navigation link', link: '/' },
-          { text: 'Navigation link', link: '/' },
-        ],
+        items: [{ text: 'Activities', link: '/activities' }],
       },
     ],
     secondaryLinks: [
       { text: 'Secondary link', link: '/' },
       { text: 'Another secondary link', link: '/' },
     ],
-
     // Search.gov configuration
     //
     // 1. Create an account with Search.gov https://search.usa.gov/signup
@@ -50,28 +63,9 @@ module.exports = {
   plugins: [
     `gatsby-plugin-sass`,
     `gatsby-plugin-react-helmet`,
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `images`,
-        path: `${__dirname}/src/images`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `blog-posts`,
-        path: `${__dirname}/src/blog-posts`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `documentation-pages`,
-        path: `${__dirname}/src/documentation-pages`,
-      },
-    },
-    `gatsby-transformer-remark`,
+    `gatsby-plugin-netlify-cms`,
+    'gatsby-transformer-remark',
+    'gatsby-plugin-sharp',
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -81,10 +75,12 @@ module.exports = {
         background_color: `#663399`,
         theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/federalist-icon.png`, // This path is relative to the root of the site.
       },
     },
-    `gatsby-plugin-netlify-cms`,
+    {
+      resolve: 'gatsby-source-contentful',
+      options: contentfulConfig,
+    }
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
